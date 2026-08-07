@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess — Play Free Online Chess Games</title>
+  <meta name="description" content="Play chess online for free. Full-featured chess with AI opponent, move history, timers, and beautiful design.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="chess.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟</text></svg>">
+</head>
+<body>
+
+  <!-- ============================================================
+       HOME SCREEN
+  ============================================================ -->
+  <div id="home-screen" class="screen active">
+    <div class="home-hero">
+      <div class="home-logo">
+        <span class="logo-icon">♟</span>
+        <span class="logo-text">Chess</span>
+      </div>
+      <p class="home-tagline">Play, learn, and master the game of kings.</p>
+    </div>
+
+    <!-- Game Mode Cards -->
+    <div class="home-cards">
+      <div class="mode-card" id="btn-pvp" onclick="selectMode('pvp')">
+        <span class="mode-icon" style="color: #4ade80;">👥</span>
+        <div class="mode-title">Play a Friend</div>
+        <div class="mode-desc">Two players share one device. Classic head-to-head chess.</div>
+        <span class="mode-badge">Local</span>
+      </div>
+
+      <div class="mode-card featured" id="btn-pvc" onclick="selectMode('pvc')">
+        <span class="mode-icon" style="color: #f59e0b;">🤖</span>
+        <div class="mode-title">Play Computer</div>
+        <div class="mode-desc">Challenge our AI opponent at adjustable difficulty levels.</div>
+        <span class="mode-badge">AI</span>
+      </div>
+
+      <div class="mode-card" id="btn-demo" onclick="selectMode('demo')">
+        <span class="mode-icon" style="color: #a78bfa;">🎬</span>
+        <div class="mode-title">AI vs AI</div>
+        <div class="mode-desc">Watch two AIs battle it out in an automated game demo.</div>
+        <span class="mode-badge">Demo</span>
+      </div>
+    </div>
+
+    <!-- Time Controls -->
+    <div style="text-align:center; width:100%; max-width:700px;">
+      <p style="font-size:0.85rem; color: var(--text-secondary); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:0.75rem;">⏱ Time Control</p>
+      <div class="time-controls">
+        <div class="time-btn" data-tc="bullet1">
+          <div class="time-icon">⚡</div>
+          <div class="time-label">Bullet</div>
+          <div class="time-val">1 min</div>
+        </div>
+        <div class="time-btn" data-tc="bullet3">
+          <div class="time-icon">⚡</div>
+          <div class="time-label">Bullet</div>
+          <div class="time-val">3 min</div>
+        </div>
+        <div class="time-btn" data-tc="blitz5">
+          <div class="time-icon">🔥</div>
+          <div class="time-label">Blitz</div>
+          <div class="time-val">5 min</div>
+        </div>
+        <div class="time-btn" data-tc="rapid10">
+          <div class="time-icon">⏱</div>
+          <div class="time-label">Rapid</div>
+          <div class="time-val">10 min</div>
+        </div>
+        <div class="time-btn" data-tc="rapid15">
+          <div class="time-icon">⏱</div>
+          <div class="time-label">Rapid</div>
+          <div class="time-val">15 min</div>
+        </div>
+        <div class="time-btn" data-tc="rapid30">
+          <div class="time-icon">⏳</div>
+          <div class="time-label">Classical</div>
+          <div class="time-val">30 min</div>
+        </div>
+        <div class="time-btn" data-tc="classical">
+          <div class="time-icon">♟</div>
+          <div class="time-label">Classical</div>
+          <div class="time-val">60 min</div>
+        </div>
+        <div class="time-btn" data-tc="unlimited">
+          <div class="time-icon">🎭</div>
+          <div class="time-label">Unlimited</div>
+          <div class="time-val">No timer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Difficulty -->
+    <div style="text-align:center; width:100%; max-width:500px;">
+      <p style="font-size:0.85rem; color: var(--text-secondary); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:0.75rem;">🤖 AI Difficulty (vs Computer)</p>
+      <div class="difficulty-row">
+        <div class="diff-btn" data-depth="1" onclick="setAIDepth(1)">🌱 Beginner</div>
+        <div class="diff-btn" data-depth="2" onclick="setAIDepth(2)">⚔️ Easy</div>
+        <div class="diff-btn" data-depth="3" onclick="setAIDepth(3)">🔥 Medium</div>
+        <div class="diff-btn" data-depth="4" onclick="setAIDepth(4)">🧠 Hard</div>
+        <div class="diff-btn" data-depth="5" onclick="setAIDepth(5)">👑 Expert</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       GAME SCREEN
+  ============================================================ -->
+  <div id="game-screen" class="screen">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()" id="back-to-home">
+        ← Home
+      </button>
+      <span class="top-logo">♟ Chess</span>
+    </div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar sidebar-left">
+
+      <!-- Black player (top) -->
+      <div class="player-info" id="player-b">
+        <div class="player-avatar black">
+          ⬛
+          <span class="active-indicator" style="display:none;"></span>
+        </div>
+        <div class="player-details">
+          <div class="player-name" id="player-b-name">Black</div>
+          <div class="player-rating" id="player-b-rating">♟ Human</div>
+          <div class="captured-area" id="captured-b"></div>
+        </div>
+        <div>
+          <div class="player-timer" id="timer-b">∞</div>
+          <div class="score-diff"></div>
+        </div>
+      </div>
+
+      <!-- Move history -->
+      <div class="panel-card" style="flex: 1;">
+        <div class="panel-card-header">
+          📜 Move History
+        </div>
+        <div class="panel-card-body">
+          <div class="move-history" id="move-history"></div>
+        </div>
+      </div>
+
+      <!-- White player (bottom) -->
+      <div class="player-info" id="player-w">
+        <div class="player-avatar white">
+          ⬜
+          <span class="active-indicator" style="display:none;"></span>
+        </div>
+        <div class="player-details">
+          <div class="player-name" id="player-w-name">White</div>
+          <div class="player-rating" id="player-w-rating">♟ Human</div>
+          <div class="captured-area" id="captured-w"></div>
+        </div>
+        <div>
+          <div class="player-timer" id="timer-w">∞</div>
+          <div class="score-diff"></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- BOARD AREA -->
+    <main class="board-area">
+      <div class="game-status" id="game-status">⬜ White's Turn</div>
+
+      <div style="display:flex; align-items:center; gap: 0.75rem; margin-bottom: 0.25rem;">
+        <div class="ai-thinking" id="ai-thinking">
+          <div class="ai-dots">
+            <div class="ai-dot"></div>
+            <div class="ai-dot"></div>
+            <div class="ai-dot"></div>
+          </div>
+          AI is thinking...
+        </div>
+      </div>
+
+      <!-- Board with coordinate labels -->
+      <div class="board-wrapper">
+        <div style="display:flex; flex-direction:column; align-items:flex-start;">
+          <div style="display:flex;">
+            <!-- Rank labels -->
+            <div class="board-coords-ranks" id="coord-ranks">
+              <div class="board-coords-rank">8</div>
+              <div class="board-coords-rank">7</div>
+              <div class="board-coords-rank">6</div>
+              <div class="board-coords-rank">5</div>
+              <div class="board-coords-rank">4</div>
+              <div class="board-coords-rank">3</div>
+              <div class="board-coords-rank">2</div>
+              <div class="board-coords-rank">1</div>
+            </div>
+            <!-- Chess board -->
+            <div id="chess-board" role="grid" aria-label="Chess board"></div>
+          </div>
+          <!-- File labels -->
+          <div style="display:flex; padding-left: 1.75rem;">
+            <div class="board-coords-files">
+              <div class="board-coords-file">a</div>
+              <div class="board-coords-file">b</div>
+              <div class="board-coords-file">c</div>
+              <div class="board-coords-file">d</div>
+              <div class="board-coords-file">e</div>
+              <div class="board-coords-file">f</div>
+              <div class="board-coords-file">g</div>
+              <div class="board-coords-file">h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar sidebar-right">
+
+      <!-- Game Controls -->
+      <div class="panel-card">
+        <div class="panel-card-header">🎮 Controls</div>
+        <div class="panel-card-body">
+          <div class="game-controls">
+            <button class="ctrl-btn" onclick="undoMove()" title="Undo Move (←)">↩</button>
+            <button class="ctrl-btn" onclick="flipBoard()" title="Flip Board (F)">🔄</button>
+            <button class="ctrl-btn danger" onclick="resignGame()" title="Resign">🏳️</button>
+            <button class="ctrl-btn" onclick="goHome()" title="New Game">🏠</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Difficulty (in-game) -->
+      <div class="panel-card" id="ai-controls-panel">
+        <div class="panel-card-header">🤖 AI Difficulty</div>
+        <div class="panel-card-body">
+          <div class="difficulty-row" style="flex-direction:column; gap:0.4rem;">
+            <div style="display:flex; gap:0.4rem;">
+              <div class="diff-btn" data-depth="1" onclick="setAIDepth(1)">🌱</div>
+              <div class="diff-btn" data-depth="2" onclick="setAIDepth(2)">⚔️</div>
+              <div class="diff-btn" data-depth="3" onclick="setAIDepth(3)">🔥</div>
+              <div class="diff-btn" data-depth="4" onclick="setAIDepth(4)">🧠</div>
+              <div class="diff-btn" data-depth="5" onclick="setAIDepth(5)">👑</div>
+            </div>
+            <div id="ai-depth-label" style="font-size:0.75rem; color:var(--text-secondary); text-align:center;">Depth 3 — Medium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts -->
+      <div class="panel-card">
+        <div class="panel-card-header">⌨️ Shortcuts</div>
+        <div class="panel-card-body">
+          <div style="display:grid; gap:0.4rem;">
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-secondary);">
+              <span>Undo move</span>
+              <kbd style="background:rgba(255,255,255,0.08); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:0.7rem;">←</kbd>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-secondary);">
+              <span>Flip board</span>
+              <kbd style="background:rgba(255,255,255,0.08); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:0.7rem;">F</kbd>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-secondary);">
+              <span>Close modal</span>
+              <kbd style="background:rgba(255,255,255,0.08); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:0.7rem;">Esc</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Info -->
+      <div class="panel-card" id="game-info-panel">
+        <div class="panel-card-header">ℹ️ Game Info</div>
+        <div class="panel-card-body">
+          <div style="display:grid; gap:0.4rem; font-size:0.8rem;">
+            <div style="display:flex; justify-content:space-between; color:var(--text-secondary);">
+              <span>Mode</span>
+              <span id="info-mode" style="color:var(--text-primary); font-weight:600;">PvP</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:var(--text-secondary);">
+              <span>Time Control</span>
+              <span id="info-tc" style="color:var(--text-primary); font-weight:600;">5 min</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:var(--text-secondary);">
+              <span>Move</span>
+              <span id="info-move" style="color:var(--text-primary); font-weight:600;">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ============================================================
+       PROMOTION MODAL
+  ============================================================ -->
+  <div class="modal-overlay hidden" id="promotion-modal">
+    <div class="modal">
+      <span class="modal-icon">♟</span>
+      <h2 class="modal-title">Promotion!</h2>
+      <p class="modal-subtitle">Choose a piece to promote your pawn to:</p>
+      <div class="promotion-pieces" id="promo-pieces"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       GAME OVER MODAL
+  ============================================================ -->
+  <div class="modal-overlay hidden" id="gameover-modal">
+    <div class="modal">
+      <span class="modal-icon" id="gameover-icon">🏆</span>
+      <h2 class="modal-title" id="gameover-title">Game Over</h2>
+      <p class="modal-subtitle" id="gameover-subtitle">by Checkmate</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="rematch()">🔄 Rematch</button>
+        <button class="btn btn-secondary" onclick="goHome()">🏠 New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="chess.js"></script>
+  <script>
+    // Extra glue functions for HTML onclick handlers
+
+    function goHome() {
+      stopTimer();
+      clearTimeout(aiMoveTimeout);
+      hideModal('gameover-modal');
+      hideModal('promotion-modal');
+      showScreen('home-screen');
+    }
+
+    let lastGameConfig = null;
+
+    const origStartGame = startGame;
+
+    function selectMode(mode) {
+      pendingMode = mode;
+      if (mode === 'demo') {
+        lastGameConfig = { mode: 'demo', tcKey: 'rapid10', playerColor: 'w' };
+        startGame('demo', 'rapid10', 'w');
+        updateGameInfo('demo', 'rapid10');
+        return;
+      }
+      const color = mode === 'pvc' ? promptColor() : 'w';
+      lastGameConfig = { mode, tcKey: pendingTC, playerColor: color };
+      startGame(mode, pendingTC, color);
+      updateGameInfo(mode, pendingTC);
+    }
+
+    function promptColor() {
+      // For simplicity, always white. Could show a choice modal later.
+      return 'w';
+    }
+
+    function rematch() {
+      hideModal('gameover-modal');
+      if (lastGameConfig) {
+        const { mode, tcKey, playerColor } = lastGameConfig;
+        startGame(mode, tcKey, playerColor);
+        updateGameInfo(mode, tcKey);
+      } else {
+        goHome();
+      }
+    }
+
+    function updateGameInfo(mode, tcKey) {
+      const tc = TIME_CONTROLS[tcKey];
+      document.getElementById('info-mode').textContent =
+        mode === 'pvp' ? 'PvP' : mode === 'pvc' ? 'vs AI' : 'AI Demo';
+      document.getElementById('info-tc').textContent = tc?.label || '?';
+
+      // Update info-move every second
+      clearInterval(window._infoInterval);
+      window._infoInterval = setInterval(() => {
+        const el = document.getElementById('info-move');
+        if (el) el.textContent = state.fullMoveNumber;
+      }, 500);
+
+      // Hide AI panel for PvP
+      const aiPanel = document.getElementById('ai-controls-panel');
+      if (aiPanel) aiPanel.style.display = mode === 'pvp' ? 'none' : '';
+    }
+
+    // Update AI depth label
+    const origSetAIDepth = setAIDepth;
+    function setAIDepth(depth) {
+      currentAIDepth = depth;
+      state.aiDepth = depth;
+      document.querySelectorAll('.diff-btn').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.depth) === depth);
+      });
+      const labels = { 1: 'Beginner', 2: 'Easy', 3: 'Medium', 4: 'Hard', 5: 'Expert' };
+      const el = document.getElementById('ai-depth-label');
+      if (el) el.textContent = `Depth ${depth} — ${labels[depth]}`;
+    }
+  </script>
+</body>
+</html>
